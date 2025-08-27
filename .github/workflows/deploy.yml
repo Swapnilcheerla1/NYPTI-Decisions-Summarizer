@@ -2,11 +2,12 @@ name: Deploy to ECS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]   # Trigger on pushes to main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: Test   # Use Test environment to access secrets
 
     steps:
       - name: Checkout
@@ -26,16 +27,14 @@ jobs:
 
       - name: Build, Tag, and Push Docker image
         run: |
-          IMAGE_TAG=${GITHUB_SHA::8}  # Use short SHA for tagging
-          IMAGE_URI=359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG
-          docker build -t $IMAGE_URI .
-          docker push $IMAGE_URI
-          echo "IMAGE_URI=$IMAGE_URI" >> $GITHUB_ENV
+          IMAGE_TAG=${GITHUB_SHA}
+          docker build -t 359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG .
+          docker push 359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
-      - name: Update ECS Service
+      - name: Deploy to ECS
         run: |
           aws ecs update-service \
             --cluster nypti-cluster \
             --service nypti-service \
-            --force-new-deployment \
-            --region us-east-1
+            --force-new-deployment
