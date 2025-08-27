@@ -1,0 +1,8 @@
+pymongo
+langchain
+langchain-google-genai
+google-generativeai
+pydantic
+python-dotenv  # For local development
+tiktoken
+eyecite

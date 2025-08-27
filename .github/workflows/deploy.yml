@@ -1,0 +1,39 @@
+name: Deploy to ECS
+
+on:
+  push:
+    branches: [ "main" ]   # Trigger on pushes to main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | \
+          docker login --username AWS --password-stdin 359927049497.dkr.ecr.us-east-1.amazonaws.com
+
+      - name: Build, Tag, and Push Docker image
+        run: |
+          IMAGE_TAG=${GITHUB_SHA}
+          docker build -t 359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG .
+          docker push 359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service \
+            --cluster nypti-cluster \
+            --service nypti-service \
+            --force-new-deployment

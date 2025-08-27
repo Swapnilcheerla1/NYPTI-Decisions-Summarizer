@@ -1,0 +1,19 @@
+# .gitignore
+
+# --- Secrets ---
+# Never, ever commit your .env file.
+.env
+
+# --- Python Caches and Virtual Environments ---
+__pycache__/
+.venv/
+venv/
+*.pyc
+
+# --- Log Files ---
+# We don't need to track the output logs in the repository.
+logs/
+
+# --- OS-specific files ---
+.DS_Store
+Thumbs.db
