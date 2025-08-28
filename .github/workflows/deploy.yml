@@ -7,7 +7,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: Test   # Use Test environment to access secrets
+    environment: Test   # Use Test environment to access secrets and production resources
 
     steps:
       - name: Checkout
