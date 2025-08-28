@@ -2,12 +2,12 @@ name: Deploy to ECS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main" ]   # Trigger on pushes to main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: Test
+    environment: Test   # Use Test environment to access secrets and production resources
 
     steps:
       - name: Checkout
@@ -27,15 +27,14 @@ jobs:
 
       - name: Build, Tag, and Push Docker image
         run: |
-          IMAGE_TAG=${GITHUB_SHA}
+          IMAGE_TAG=latest
           docker build -t 359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG .
           docker push 359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
-      - name: Deploy CloudFormation Stack
+      - name: Deploy to ECS
         run: |
-          aws cloudformation deploy \
-            --stack-name AISummarizerStack \
-            --template-file AISummarizer.yaml \
-            --capabilities CAPABILITY_NAMED_IAM \
-            --parameter-overrides DockerImageTag=${IMAGE_TAG} Environment=Test
+          aws ecs update-service \
+            --cluster Test-nypti-cluster \
+            --service AISummarizer-NyptiService-7AN68OzZ37tW \
+            --force-new-deployment
