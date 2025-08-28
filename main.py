@@ -85,7 +85,7 @@ def main():
             print(f"Processing document ID: {doc_id}")
             
             try:
-                raw_html = decision.get("raw_html_text")
+                raw_html = decision.get("html")
                 if not raw_html:
                     raise ValueError("Document is missing the 'raw_html_text' field.")
                 
