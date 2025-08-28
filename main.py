@@ -50,14 +50,24 @@ def main():
         #decisions_collection = db.decisions
         print("Successfully connected to MongoDB.")
         count = decisions_collection.count_documents({})
-        print(f"📊 Total records in 'decisions' collection: {count}")
-        
+        print(f"📊 Total records in 'users' collection: {count}")
         if count > 0:
             sample_doc = decisions_collection.find_one()
-            print("🔍 Sample record:")
+            print("🔍 Sample record before update:")
             print(sample_doc)
+
+            # 👉 Add `is_summarized = False` to all docs that don’t already have it
+            result = decisions_collection.update_many(
+                {"is_summarized": {"$exists": False}},   # filter
+                {"$set": {"is_summarized": False}}       # update
+            )
+            print(f"✅ Updated {result.modified_count} documents with 'is_summarized = False'")
+
+            sample_after = decisions_collection.find_one()
+            print("🔍 Sample record after update:")
+            print(sample_after)
         else:
-            print("⚠️ No records found in the 'decisions' collection.")
+            print("⚠️ No records found in the 'users' collection.")
     except Exception as e:
         print(f"FATAL: Could not connect to MongoDB. Error: {e}")
         return
