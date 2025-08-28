@@ -49,6 +49,15 @@ def main():
         #db = mongo_client.nypti_database
         #decisions_collection = db.decisions
         print("Successfully connected to MongoDB.")
+        count = decisions_collection.count_documents({})
+        print(f"📊 Total records in 'decisions' collection: {count}")
+        
+        if count > 0:
+            sample_doc = decisions_collection.find_one()
+            print("🔍 Sample record:")
+            print(sample_doc)
+        else:
+            print("⚠️ No records found in the 'decisions' collection.")
     except Exception as e:
         print(f"FATAL: Could not connect to MongoDB. Error: {e}")
         return
