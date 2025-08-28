@@ -44,8 +44,10 @@ def main():
     try:
         print("Connecting to MongoDB...")
         mongo_client = pymongo.MongoClient(mongo_url)
-        db = mongo_client.nypti_database
-        decisions_collection = db.decisions
+        db = mongo_client.test
+        decisions_collection = db.user
+        #db = mongo_client.nypti_database
+        #decisions_collection = db.decisions
         print("Successfully connected to MongoDB.")
     except Exception as e:
         print(f"FATAL: Could not connect to MongoDB. Error: {e}")
