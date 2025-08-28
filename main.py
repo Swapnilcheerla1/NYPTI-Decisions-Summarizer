@@ -45,7 +45,7 @@ def main():
         print("Connecting to MongoDB...")
         mongo_client = pymongo.MongoClient(mongo_url)
         db = mongo_client.test
-        decisions_collection = db.user
+        decisions_collection = db.users
         #db = mongo_client.nypti_database
         #decisions_collection = db.decisions
         print("Successfully connected to MongoDB.")
