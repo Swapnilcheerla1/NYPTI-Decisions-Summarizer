@@ -36,5 +36,5 @@ jobs:
         run: |
           aws ecs update-service \
             --cluster Test-nypti-cluster \
-            --service AISummarizer-NyptiService-lhfhDKBMCiNK \
+            --service AISummarizer-NyptiService-vNrgk1wn3KW2 \
             --force-new-deployment
