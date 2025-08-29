@@ -36,6 +36,8 @@ def main():
     # --- 2. Configuration and DB Connection ---
     mongo_url = os.environ.get("MONGO_URL")
     gemini_api_key = os.environ.get("GEMINI_API_KEY")
+    db_name = os.environ.get("MONGO_DB_NAME", "PublicDecisions")   
+    collection_name = os.environ.get("MONGO_COLLECTION", "Documents") 
 
     if not mongo_url or not gemini_api_key:
         print("FATAL: MONGO_URL and GEMINI_API_KEY environment variables must be set.")
@@ -44,13 +46,11 @@ def main():
     try:
         print("Connecting to MongoDB...")
         mongo_client = pymongo.MongoClient(mongo_url)
-        db = mongo_client.test
-        decisions_collection = db.users
-        #db = mongo_client.nypti_database
-        #decisions_collection = db.decisions
+        db = mongo_client[db_name]
+        decisions_collection = db[collection_name]
         print("Successfully connected to MongoDB.")
         count = decisions_collection.count_documents({})
-        print(f"📊 Total records in 'users' collection: {count}")
+        print(f"📊 Total records in '{collection_name}' collection: {count}")
         if count > 0:
             sample_doc = decisions_collection.find_one()
             print("🔍 Sample record before update:")
