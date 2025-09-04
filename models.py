@@ -45,7 +45,7 @@ class SourcedHoldingsList(BaseModel):
     sourced_holdings: List[SourcedHolding] = Field(description="A list of holdings, each with its supporting quote for the legal principle.")
 
 class LegalBrief(BaseModel):
-    brief_step_1_format_note: str = Field(default="AI case analysis following 9 steps.", description="Note about the format being used.")
+    brief_step_1_format_note: str = Field(description="Note about the format being used.")
     brief_step_2_caption: CaptionDetails = Field(description="Case caption details (name, court, year, citation).")
     brief_step_3_key_facts_takeaways: List[str] = Field(
         description="A list of concise, bullet-point style key legally relevant facts. Each string in the list should be a distinct factual takeaway."

@@ -98,7 +98,13 @@ def generate_structured_brief(full_text: str, api_key: str) -> Tuple[Optional[Di
     if not unsourced_brief:
         print("ERROR: Main brief generation failed, returned None.")
         return None, total_usage
-
+    
+    # Update the format note using the court name that was already extracted
+    court_name = unsourced_brief.brief_step_2_caption.court
+    dynamic_format_note = f"This is an AI generated summary of a decision from {court_name}."
+    unsourced_brief.brief_step_1_format_note = dynamic_format_note
+    print(f"Updated format note: {dynamic_format_note}")
+    
     # STEP 2: Source quotes and accumulate usage from each call
     sourced_facts, facts_usage = _source_takeaways(unsourced_brief.brief_step_3_key_facts_takeaways, full_text, llm)
     _accumulate_usage(facts_usage)

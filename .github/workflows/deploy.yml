@@ -19,6 +19,18 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
+      
+      - name: Set Environment Variables
+        run: |
+          if [ "${{ job.environment }}" = "Prod" ]; then
+            echo "ECR_REPO=nypti-summarizer-prod" >> $GITHUB_ENV
+            echo "ECS_CLUSTER=Prod-nypti-cluster" >> $GITHUB_ENV
+            echo "ECS_SERVICE=AISummarizer-NyptiService-Prod" >> $GITHUB_ENV
+          else
+            echo "ECR_REPO=nypti-summarizer-test" >> $GITHUB_ENV
+            echo "ECS_CLUSTER=Test-nypti-cluster" >> $GITHUB_ENV
+            echo "ECS_SERVICE=AISummarizer-NyptiService-Test" >> $GITHUB_ENV
+          fi
 
       - name: Login to Amazon ECR
         run: |
@@ -28,13 +40,13 @@ jobs:
       - name: Build, Tag, and Push Docker image
         run: |
           IMAGE_TAG=latest
-          docker build -t 359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG .
-          docker push 359927049497.dkr.ecr.us-east-1.amazonaws.com/nypti-summarizer:$IMAGE_TAG
+          docker build -t 359927049497.dkr.ecr.us-east-1.amazonaws.com/$ECR_REPO:$IMAGE_TAG .
+          docker push 359927049497.dkr.ecr.us-east-1.amazonaws.com/$ECR_REPO:$IMAGE_TAG
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
-      - name: Deploy to ECS
-        run: |
-          aws ecs update-service \
-            --cluster Test-nypti-cluster \
-            --service AISummarizer-NyptiService-vNrgk1wn3KW2 \
-            --force-new-deployment
+      # - name: Deploy to ECS
+      #   run: |
+      #     aws ecs update-service \
+      #       --cluster Test-nypti-cluster \
+      #       --service AISummarizer-NyptiService-vNrgk1wn3KW2 \
+      #       --force-new-deployment
